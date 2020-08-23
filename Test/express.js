@@ -4,11 +4,27 @@ const express = require('express')
 // npm i --seva morgan
 const logger = require('morgan')
 const app = express() // express 객체 생성
-const users = [{ name: 'Alice' }]
+const users = [
+    { id: 1, name: 'Alice' },
+    { id: 2, name: 'Blice' },
+    { id: 3, name: 'Clice' },
+
+]
 
 
 app.get('/', (req, res) => res.send('Hello World!'))
-app.get('/users', (req, res) => res.json(users))
+app.get('/users', (req, res) => {
+    req.query.limit = req.query.limit || 10
+    const limit = parseInt(req.query.limit, 10)
+
+    if (Number.isNaN(limit)) {
+        res.status(400).end()
+    } else {
+
+    }
+
+    res.json(users.slice(0, limit))
+})
 
 // 에러를 위한 미들웨어
 const errorMw = (err, req, res, next) => {
@@ -33,8 +49,5 @@ app.use(mw)
 app.use(mw2)
 app.use(logger('dev'))
 app.use(errorMw)
-
-// Server 요청 대기상태
-// app.listen(5000, () => console.log('running'));
 
 module.exports = app
